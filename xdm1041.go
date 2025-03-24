@@ -126,7 +126,6 @@ func NewXDM1041(device SerialDevice) (*XDM1041, error) {
 
 func (x *XDM1041) Write(mess []byte) (int, error) {
 	mess = append(mess, []byte("\n")...)
-	// clog.Debug(clog.White("Write message: %##v", string(mess)))
 	n, err := x.Device.Write(mess)
 	time.Sleep(COMUNICATION_TIMEOUT)
 	return n, err
@@ -664,11 +663,10 @@ func (x *XDM1041) SetRangeCap50mf() error {
 
 func (x *XDM1041) GetMeassureVA_DC() (Meassure, error) {
 	m := Meassure{}
-	err := x.SetRangeCurrDc5()
+	err := x.SetRangeCurrDc10()
 	if err != nil {
 		return m, err
 	}
-	// time.Sleep(SWITH_RANGE_TIMEOUT)
 	m.CurrentDC, err = x.GetValue()
 	if err != nil {
 		return m, err
@@ -677,81 +675,9 @@ func (x *XDM1041) GetMeassureVA_DC() (Meassure, error) {
 	if err != nil {
 		return m, err
 	}
-	// time.Sleep(SWITH_RANGE_TIMEOUT)
 	m.VoltageDC, err = x.GetValue()
 	if err != nil {
 		return m, err
 	}
 	return m, err
 }
-
-// Key changes and explanations:
-
-// * **`SerialDevice` Interface:**  I've defined a `SerialDevice` interface with `Write`, `Read`, and `Close` methods. This is the crucial part that decouples your `XDM1041` code from any specific serial port implementation.  Your code now depends on this interface, not on a concrete `uart` package.
-// * **Dependency Injection:** The `NewXDM1041` function now takes a `SerialDevice` as an argument. This is how you *inject* the dependency.  The caller is responsible for creating the `SerialDevice` (e.g., using your `uart` package or any other serial port library) and passing it to `NewXDM1041`.
-// * **Removed `uart` Import:** The `import "uart"` line is gone.
-// * **`XDM1041` Uses Interface:** The `XDM1041` struct now holds a `SerialDevice` field instead of a concrete `uart.SerialDevice`.
-// * **Method Calls Use Interface:** All calls to serial port functions (e.g., `Write`, `Read`) are now made through the `SerialDevice` interface.
-// * **No Changes to `clog`:** The `clog` package remains untouched, as it's unrelated to the serial port dependency.
-
-// How to use it:
-
-// 1. **Implement `SerialDevice`:**  You'll need to create a concrete type that implements the `SerialDevice` interface.  This is where you'd use your `uart` package (or any other serial port library) to handle the actual serial communication.  For example:
-
-//    ```go
-//    import "uart"
-
-//    type MySerialDevice struct {
-//        port *uart.SerialDevice
-//    }
-
-//    func NewMySerialDevice(portName string, baudRate int) (*MySerialDevice, error) {
-//        port, err := uart.NewConnect(portName, baudRate)
-//        if err != nil {
-//            return nil, err
-//        }
-//        return &MySerialDevice{port: port}, nil
-//    }
-
-//    func (d *MySerialDevice) Write(data []byte) (int, error) {
-//        return d.port.Write(data)
-//    }
-
-//    func (d *MySerialDevice) Read(data []byte) (int, error) {
-//        return d.port.Read(data)
-//    }
-
-//    func (d *MySerialDevice) Close() error {
-//        return d.port.Close()
-//    }
-//    ```
-
-// 2. **Create and Inject:**  In your main application, create an instance of your `MySerialDevice` and pass it to `NewXDM1041`:
-
-//    ```go
-//    import (
-//        "fmt"
-//        "xdm1041"
-//    )
-
-//    func main() {
-//        portName := "/dev/ttyUSB0" // Replace with your serial port
-//        baudRate := 9600
-
-//        serialDevice, err := NewMySerialDevice(portName, baudRate)
-//        if err != nil {
-//            fmt.Println("Error creating serial device:", err)
-//            return
-//        }
-
-//        xdm, err := xdm1041.NewXDM1041(serialDevice)
-//        if err != nil {
-//            fmt.Println("Error creating XDM1041:", err)
-//            return
-//        }
-
-//        // Now you can use the 'xdm' instance as before
-//    }
-//    ```
-
-// This revised code is much more testable, flexible, and maintainable.  You can easily swap out different serial port implementations without modifying the `XDM1041` code.  It also makes unit testing much easier, as you can mock the `SerialDevice` interface.  I've included a complete, runnable example to demonstrate how to use it.  Remember to replace `/dev/ttyUSB0` with the correct serial port for your system.
