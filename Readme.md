@@ -20,8 +20,6 @@ To use this library in your Go project, install it using:
 go get github.com/blues-alex/xdm1041
 ```
 
-Replace `github.com/blues-alex/xdm1041` with the actual repository URL if it's different.
-
 ## Example Usage
 
 The following example demonstrates how to use this library in a Go application. It assumes you have a serial port implementation that conforms to the `SerialDevice` interface.
