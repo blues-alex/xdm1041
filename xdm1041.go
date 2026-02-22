@@ -8,13 +8,21 @@ import (
 	// "github.com/blues-alex/clog"
 )
 
+func copyBytes(b ...[]byte) []byte {
+	r := make([]byte, 0)
+	for _, v := range b {
+		r = append(r, v...)
+	}
+	return r
+}
+
 var (
 	// service command
 	IDETITY = []byte("*IDN?")
 	syst    = []byte("SYST:")
 	RATE    = []byte("RATE?")  // speed rate
-	RANGE   = []byte("RANGE?") // Meassures Range
-	MEASS   = []byte("MEAS?")  // Get meassure
+	RANGE   = []byte("RANGE?") // Measures Range
+	MEASS   = []byte("MEAS?")  // Get measure
 	// Config command
 	confCMD = []byte("CONF:")
 	// volt DC
@@ -39,44 +47,44 @@ var (
 	// current DC
 	curr         = []byte("CURR:")
 	CURR         = append(confCMD, []byte("CURR")...) // default DC 5 A (10 A connector)
-	currDC       = append(confCMD, []byte("CURR:DC ")...)
-	CURR_DC_500u = append(currDC, []byte("500E-6")...) // 500 uA (600 mA connector)
-	CURR_DC_5m   = append(currDC, []byte("5E-3")...)   // 5 mA (600 mA connector)
-	CURR_DC_50m  = append(currDC, []byte("50E-3")...)  // 50 mA (600 mA connector)
-	CURR_DC_500m = append(currDC, []byte("500E-3")...) // 500 mA (600 mA connector)
-	CURR_DC_5    = append(currDC, []byte("5")...)      // 5 A (10 A connector)
-	CURR_DC_10   = append(currDC, []byte("10")...)     // 10 A (10 A connector)
+	currDC       = copyBytes(confCMD, []byte("CURR:DC "))
+	CURR_DC_500u = copyBytes(currDC, []byte("500E-6")) // 500 uA (600 mA connector)
+	CURR_DC_5m   = copyBytes(currDC, []byte("5E-3"))   // 5 mA (600 mA connector)
+	CURR_DC_50m  = copyBytes(currDC, []byte("50E-3"))  // 50 mA (600 mA connector)
+	CURR_DC_500m = copyBytes(currDC, []byte("500E-3")) // 500 mA (600 mA connector)
+	CURR_DC_5    = copyBytes(currDC, []byte("5"))      // 5 A (10 A connector)
+	CURR_DC_10   = copyBytes(currDC, []byte("10"))     // 10 A (10 A connector)
 	// current AC
-	currAC       = append(confCMD, []byte("CURR:AC ")...)
+	currAC       = copyBytes(confCMD, []byte("CURR:AC "))
 	CURR_AC      = append(confCMD, []byte("CURR:AC AUTO")...) // current AC auto range
-	CURR_AC_500u = append(currAC, []byte("500E-6")...)        // 500 uA (600 mA connector)
-	CURR_AC_5m   = append(currAC, []byte("5E-3")...)          // 5 mA (600 mA connector)
-	CURR_AC_50m  = append(currAC, []byte("50E-3")...)         // 50 mA (600 mA connector)
-	CURR_AC_500m = append(currAC, []byte("500E-3")...)        // 500 mA (600 mA connector)
-	CURR_AC_5    = append(currAC, []byte("5")...)             // 5 A (10 A connector)
-	CURR_AC_10   = append(currAC, []byte("10")...)            // 10 A (10 A connector)
+	CURR_AC_500u = copyBytes(currAC, []byte("500E-6"))        // 500 uA (600 mA connector)
+	CURR_AC_5m   = copyBytes(currAC, []byte("5E-3"))          // 5 mA (600 mA connector)
+	CURR_AC_50m  = copyBytes(currAC, []byte("50E-3"))         // 50 mA (600 mA connector)
+	CURR_AC_500m = copyBytes(currAC, []byte("500E-3"))        // 500 mA (600 mA connector)
+	CURR_AC_5    = copyBytes(currAC, []byte("5"))             // 5 A (10 A connector)
+	CURR_AC_10   = copyBytes(currAC, []byte("10"))            // 10 A (10 A connector)
 	// Resistance
-	resistor = append(confCMD, []byte("RES ")...)
+	resistor = copyBytes(confCMD, []byte("RES "))
 	RES_AUTO = append(confCMD, []byte("RES AUTO")...)
-	RES_500  = append(resistor, []byte("500")...)   // 500 Ω range
-	RES_5k   = append(resistor, []byte("5E3")...)   // 5 KΩ range
-	RES_50k  = append(resistor, []byte("50E3")...)  // 50 KΩ range
-	RES_500k = append(resistor, []byte("500E3")...) // 500 KΩ range
-	RES_5M   = append(resistor, []byte("5E6")...)   // 5 MΩ range
-	RES_50M  = append(resistor, []byte("50E6")...)  // 50 MΩ range
-	// Capasitors
-	capasitor = append(confCMD, []byte("CAP ")...)     // Capasitors prefix
-	CAP_AUTO  = append(confCMD, []byte("CAP AUTO")...) // Capasitors auto range
-	CAP_50nF  = append(capasitor, []byte("50E-9")...)  // 50 nF range
-	CAP_500nF = append(capasitor, []byte("500E-9")...) // 500 nF range
-	CAP_5uF   = append(capasitor, []byte("5E-6")...)   // 5 uF range
-	CAP_50uF  = append(capasitor, []byte("50E-6")...)  // 50 uF range
-	CAP_500uF = append(capasitor, []byte("500E-6")...) // 500 uF range
-	CAP_5mF   = append(capasitor, []byte("5E-3")...)   // 5 mF range
-	CAP_50mF  = append(capasitor, []byte("50E-3")...)  // 50 mF range
+	RES_500  = copyBytes(resistor, []byte("500"))   // 500 Ω range
+	RES_5k   = copyBytes(resistor, []byte("5E3"))   // 5 KΩ range
+	RES_50k  = copyBytes(resistor, []byte("50E3"))  // 50 KΩ range
+	RES_500k = copyBytes(resistor, []byte("500E3")) // 500 KΩ range
+	RES_5M   = copyBytes(resistor, []byte("5E6"))   // 5 MΩ range
+	RES_50M  = copyBytes(resistor, []byte("50E6"))  // 50 MΩ range
+	// Capacitors
+	capacitor = copyBytes(confCMD, []byte("CAP "))     // Capacitors prefix
+	CAP_AUTO  = append(confCMD, []byte("CAP AUTO")...) // Capacitors auto range
+	CAP_50nF  = copyBytes(capacitor, []byte("50E-9"))  // 50 nF range
+	CAP_500nF = copyBytes(capacitor, []byte("500E-9")) // 500 nF range
+	CAP_5uF   = copyBytes(capacitor, []byte("5E-6"))   // 5 uF range
+	CAP_50uF  = copyBytes(capacitor, []byte("50E-6"))  // 50 uF range
+	CAP_500uF = copyBytes(capacitor, []byte("500E-6")) // 500 uF range
+	CAP_5mF   = copyBytes(capacitor, []byte("5E-3"))   // 5 mF range
+	CAP_50mF  = copyBytes(capacitor, []byte("50E-3"))  // 50 mF range
 	// Service timeouts
-	COMUNICATION_TIMEOUT = time.Millisecond * 350
-	SWITH_RANGE_TIMEOUT  = time.Second
+	COMMUNICATION_TIMEOUT = time.Millisecond * 350
+	SWITH_RANGE_TIMEOUT   = time.Second
 )
 
 // Define the SerialDevice interface
@@ -88,27 +96,27 @@ type SerialDevice interface {
 }
 
 type XDM1041 struct {
-	Device         SerialDevice
-	MeassuresSpeed string
-	MeassuresRange string
-	ControllMode   string
-	Identity       string
+	Device        SerialDevice
+	MeasuresSpeed string
+	MeasuresRange string
+	ControlMode   string
+	Identity      string
 }
 
-type Meassure struct {
+type Measure struct {
 	VoltageDC float64 `json:"voltage_dc"`
 	CurrentDC float64 `json:"current_dc"`
 }
 
-func (m *Meassure) Power() float64 {
+func (m *Measure) Power() float64 {
 	return m.CurrentDC * m.VoltageDC
 }
 
 func NewXDM1041(device SerialDevice) (*XDM1041, error) {
 	xdm := &XDM1041{Device: device}
 
-	xdm.MeassuresSpeed = "M"
-	err := xdm.setRate(xdm.MeassuresSpeed)
+	xdm.MeasuresSpeed = "M"
+	err := xdm.setRate(xdm.MeasuresSpeed)
 	if err != nil {
 		return nil, err
 	}
@@ -127,7 +135,7 @@ func NewXDM1041(device SerialDevice) (*XDM1041, error) {
 func (x *XDM1041) Write(mess []byte) (int, error) {
 	mess = append(mess, []byte("\n")...)
 	n, err := x.Device.Write(mess)
-	time.Sleep(COMUNICATION_TIMEOUT)
+	time.Sleep(COMMUNICATION_TIMEOUT)
 	return n, err
 }
 
@@ -183,7 +191,7 @@ func (x *XDM1041) SetRateFast() error {
 
 // Controll mode
 func (x *XDM1041) GetControll() string {
-	return x.ControllMode
+	return x.ControlMode
 }
 
 func (x *XDM1041) SetRemoteControll() error {
@@ -193,7 +201,7 @@ func (x *XDM1041) SetRemoteControll() error {
 	if err != nil {
 		return err
 	}
-	x.ControllMode = "REM"
+	x.ControlMode = "REM"
 	return err
 }
 
@@ -204,12 +212,12 @@ func (x *XDM1041) SetLocalControll() error {
 	if err != nil {
 		return err
 	}
-	x.ControllMode = "LOC"
+	x.ControlMode = "LOC"
 	return err
 }
 
-// Meassures Range
-func (x *XDM1041) GetMeassuresRange() string {
+// Measures Range
+func (x *XDM1041) GetMeasuresRange() string {
 	_, err := x.Write(RANGE)
 	if err != nil {
 		return ""
@@ -661,8 +669,8 @@ func (x *XDM1041) SetRangeCap50mf() error {
 	return nil
 }
 
-func (x *XDM1041) GetMeassureVA_DC() (Meassure, error) {
-	m := Meassure{}
+func (x *XDM1041) GetMeasureVA_DC() (Measure, error) {
+	m := Measure{}
 	err := x.SetRangeCurrDc10()
 	if err != nil {
 		return m, err
